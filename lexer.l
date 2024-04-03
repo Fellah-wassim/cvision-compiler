@@ -1,50 +1,257 @@
+%option noyywrap
+
 %{
-#include <string>
-#define SAVE_TOKEN yylval.string = new std::string(yytext, yyleng)
-#define TOKEN(t) (yylval.token = t)
-extern "C" int yywrap() { }
+  #include<stdio.h>
+  #include<stdlib.h>
+  #include<string.h>
+  #include "synt.tab.h"
+  int number_of_line = 1;
+  int column_position = 1;
 %}
+
+
+LETTER [a-zA-Z]
+NUMBER [0-9]
+IDENTIFIER {LETTER}({LETTER}|{NUMBER})*
+CONSTANT_INTEGER ({NUMBER}+|"\("[+-]{NUMBER}+"\)")
+CONSTANT_FLOAT ({NUMBER}+"."{NUMBER}+|\([+-]{NUMBER}+"."{NUMBER}+\))
+CONSTANT_CHAR (\'[^']*\')
+DOUBLE {NUMBER}+\.{NUMBER}+
+INTEGER {NUMBER}+
 
 %%
 
 
-[ \t\n\r]               ; // Ignore whitespace and newlines
-\/\/[^\n]*              ; // Ignore single-line comments
-\/\*[^*]*\*\/           ; // Ignore multi-line comments
-[a-zA-Z_][a-zA-Z0-9_]*  SAVE_TOKEN; return TIDENTIFIER;
-[0-9]+.[0-9]*           SAVE_TOKEN; return TDOUBLE;
-[0-9]+                  SAVE_TOKEN; return TINTEGER;
-"if"                    return TOKEN(TIF);
-"else"                  return TOKEN(TELSE);
-"while"                 return TOKEN(TWHILE);
-"for"                   return TOKEN(TFOR);
-"int"                   return TOKEN(TINT);
-"float"                 return TOKEN(TFLOAT);
-"char"                  return TOKEN(TCHAR);
-"double"                return TOKEN(TDOUBLE);
-"void"                  return TOKEN(TVOID);
-"return"                return TOKEN(TRETURN);
-"&&"                    return TOKEN(TLOGICAL_AND);
-"||"                    return TOKEN(TLOGICAL_OR);
-"!"                     return TOKEN(TLOGICAL_NOT);
-"="                     return TOKEN(TEQUAL);
-"=="                    return TOKEN(TCEQ);
-"!="                    return TOKEN(TCNE);
-"<"                     return TOKEN(TCLT);
-"<="                    return TOKEN(TCLE);
-">"                     return TOKEN(TCGT);
-">="                    return TOKEN(TCGE);
-"("                     return TOKEN(TLPAREN);
-")"                     return TOKEN(TRPAREN);
-"{"                     return TOKEN(TLBRACE);
-"}"                     return TOKEN(TRBRACE);
-"."                     return TOKEN(TDOT);
-","                     return TOKEN(TCOMMA);
-";"                     return TOKEN(TSEMICOLON);
-"+"                     return TOKEN(TPLUS);
-"-"                     return TOKEN(TMINUS);
-"*"                     return TOKEN(TMUL);
-"/"                     return TOKEN(TDIV);
-.                       printf("Unknown token!n"); yyterminate();
+{IDENTIFIER} { 
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return IDENTIFIER; 
+}
+
+{DOUBLE} {
+  yylval.str = strdup(yytext);
+  column_position = column_position + strlen(yytext);  
+  return DOUBLE; 
+}
+
+{INTEGER} {
+  yylval.str = strdup(yytext);
+  column_position = column_position + strlen(yytext);  
+  return INTEGER;
+}
+
+{CONSTANT_INTEGER} {
+  if(atoi(yytext) > -32768 && atoi(yytext) < 32768){
+    yylval.str = strdup(yytext);
+    column_position = column_position + strlen(yytext);
+    return CONSTANT_INTEGER;
+  }else{
+    printf("Integer invalide line: %d, column: %d", number_of_line, column_position);
+  }
+} 
+
+{CONSTANT_FLOAT} {
+  yylval.str = strdup(yytext);
+  column_position = column_position + strlen(yytext);
+  return CONSTANT_FLOAT;
+}
+
+{CONSTANT_CHAR} {
+  yylval.str = strdup(yytext);
+  column_position = column_position + strlen(yytext);
+  return CONSTANT_CHAR;
+}
+
+"if" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext);
+  return KEY_WORD_IF;
+}
+
+"else" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext);
+  return KEY_WORD_ELSE;
+}
+
+"while" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext);
+  return KEY_WORD_WHILE;
+}
+
+"for" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext);
+  return KEY_WORD_FOR;
+}
+
+"int" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext);
+  return KEY_WORD_INT;
+}
+
+"float" {
+  yylval.str=strdup(yytext); 
+  column_position = column_position + strlen(yytext);
+  return KEY_WORD_FLOAT; 
+}
+
+"char" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_CHAR; 
+}
+
+"double" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_DOUBLE; 
+}
+
+"void" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_VOID; 
+}
+
+"return" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_RETURN; 
+}
+
+"&&" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_LOGICAL_AND; 
+}
+
+"||" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_LOGICAL_OR; 
+}
+
+"!" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_LOGICAL_NOT; 
+}
+
+"=" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_EQUAL; 
+}
+
+"==" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_CEQ; 
+}
+
+"!=" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_CNE; 
+}
+
+"<" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_CLT; 
+}
+
+"<=" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_CLE; 
+}
+
+">" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_CGT; 
+}
+
+">=" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_CGE; 
+}
+
+"(" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_LPAREN; 
+}
+
+")" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_RPAREN; 
+}
+
+"{" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_LBRACE; 
+}
+
+"}" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_RBRACE; 
+}
+
+"." {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_DOT; 
+}
+
+"," {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_COMMA; 
+}
+
+";" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_SEMICOLON; 
+}
+
+"+" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_PLUS; 
+}
+
+"-" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_MINUS; 
+}
+
+"*" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_MUL; 
+}
+
+"/" {
+  yylval.str=strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return KEY_WORD_DIV; 
+}
+
+\n                      { number_of_line++; }
+[ \t]
+\/\/[^\n]*
+\/\*[^*]*\*\/ 
+.                       { printf("Unknown token!\n"); yyterminate(); }
 
 %%
