@@ -14,19 +14,60 @@
 	char* str;
 }
 
-%token <str>IDENTIFIER <int>INTEGER <str>CONSTANT_INTEGER <str>CONSTANT_FLOAT <str>CONSTANT_CHAR <float>DOUBLE <str>KEY_WORD_IF <str>KEY_WORD_ELSE <str>KEY_WORD_WHILE 
-%token <str>KEY_WORD_FOR <str>KEY_WORD_INT <str>KEY_WORD_FLOAT <str>KEY_WORD_CHAR <str>KEY_WORD_DOUBLE 
-%token <str>KEY_WORD_VOID <str>KEY_WORD_RETURN <str>KEY_WORD_LOGICAL_AND <str>KEY_WORD_LOGICAL_OR 
-%token <str>KEY_WORD_LOGICAL_NOT <str>KEY_WORD_EQUAL <str>KEY_WORD_CEQ <str>KEY_WORD_CNE <str>KEY_WORD_CLT 
-%token <str>KEY_WORD_CLE <str>KEY_WORD_CGT <str>KEY_WORD_CGE <str>KEY_WORD_LPAREN <str>KEY_WORD_RPAREN 
-%token <str>KEY_WORD_LBRACE <str>KEY_WORD_RBRACE <str>KEY_WORD_DOT <str>KEY_WORD_COMMA  
-%token <str>KEY_WORD_SEMICOLON <str>KEY_WORD_PLUS <str>KEY_WORD_MINUS <str>KEY_WORD_MUL <str>KEY_WORD_DIV
+%token <str>IDENTIFIER <int>INTEGER <str>KEY_WORD_CONST <str>CONSTANT_INTEGER <str>CONSTANT_FLOAT <str>CONSTANT_CHAR <float>DOUBLE <str>IF <str>ELSE <str>WHILE 
+%token <str>FOR <str>KEY_WORD_INT <str>KEY_WORD_FLOAT <str>KEY_WORD_CHAR <str>KEY_WORD_DOUBLE 
+%token <str>VOID <str>RETURN <str>LOGICAL_AND <str>AND <str>LOGICAL_OR 
+%token <str>LOGICAL_NOT <str>ASSIGN <str>EQUAL <str>NOT_EQUAL <str>LOWER 
+%token <str>LOWER_OR_EQUAL <str>GREATER <str>GREATER_OR_EQUAL <str>LPAREN <str>RPAREN 
+%token <str>LBRACE <str>RBRACE <str>DOT <str>COMMA  
+%token <str>SEMICOLON <str>PLUS <str>MINUS <str>MUL <str>DIV
+%token <str>INCLUDE_DIRECTIVE <str>STRING_LITERAL <str>CV_MAT <str>CV_IMREAD <str>CV_FUNCTION <str>CV_MAT_FUNCTION
 
-%start S
+%start program
 
 %%
 
-S: IDENTIFIER KEY_WORD_SEMICOLON { printf("Syntax correct %s \n", $1); YYACCEPT; }
+program: INCLUDE_DIRECTIVE function_definition {
+  printf("SYNTAX CORRECT \n");
+  YYACCEPT;
+}
+
+function_definition: type IDENTIFIER LPAREN parameter_list RPAREN LBRACE statement_list RBRACE
+
+parameter_list: parameter
+  | parameter COMMA parameter_list
+
+// function_call: IDENTIFIER DOT IDENTIFIER LPAREN RPAREN
+//   | CV_IMREAD LPAREN parameter_list RPAREN
+
+parameter: type IDENTIFIER
+  | IDENTIFIER DOT IDENTIFIER LPAREN RPAREN
+  | CV_IMREAD LPAREN parameter_list RPAREN
+  | STRING_LITERAL
+  | IDENTIFIER
+
+type: KEY_WORD_INT
+  | KEY_WORD_FLOAT
+  | KEY_WORD_CHAR
+  | KEY_WORD_DOUBLE
+  | KEY_WORD_CONST
+  | CV_MAT
+  | KEY_WORD_CONST CV_MAT AND
+
+
+statement_list: statement
+  | statement statement_list
+
+statement: declaration SEMICOLON
+  | assignment SEMICOLON
+  | CV_FUNCTION LPAREN parameter_list RPAREN SEMICOLON
+
+declaration: type IDENTIFIER
+
+assignment: declaration ASSIGN CV_MAT_FUNCTION LPAREN parameter_list RPAREN
+  | declaration ASSIGN IDENTIFIER LPAREN parameter_list RPAREN
+  | IDENTIFIER ASSIGN CV_MAT_FUNCTION
+
 
 %%
 
