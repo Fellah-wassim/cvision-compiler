@@ -4,7 +4,7 @@
   #include<stdio.h>
   #include<stdlib.h>
   #include<string.h>
-  #include "synt.tab.h"
+  #include "../bison_out/synt.tab.h"
   int number_of_line = 1;
   int column_position = 1;
 %}
