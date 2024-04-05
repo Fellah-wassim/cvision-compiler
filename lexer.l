@@ -16,17 +16,11 @@ IDENTIFIER {LETTER}({LETTER}|{NUMBER})*
 CONSTANT_INTEGER ({NUMBER}+|"\("[+-]{NUMBER}+"\)")
 CONSTANT_FLOAT ({NUMBER}+"."{NUMBER}+|\([+-]{NUMBER}+"."{NUMBER}+\))
 CONSTANT_CHAR (\'[^']*\')
+STRING_LITERAL (\"[^\"]*\")
 DOUBLE {NUMBER}+\.{NUMBER}+
 INTEGER {NUMBER}+
 
 %%
-
-
-{IDENTIFIER} { 
-  yylval.str=strdup(yytext);
-  column_position = column_position + strlen(yytext); 
-  return IDENTIFIER; 
-}
 
 {DOUBLE} {
   yylval.str = strdup(yytext);
@@ -62,196 +56,256 @@ INTEGER {NUMBER}+
   return CONSTANT_CHAR;
 }
 
+{STRING_LITERAL} {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng;
+  return STRING_LITERAL;
+}
+
 "if" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext);
-  return KEY_WORD_IF;
+  return IF;
 }
 
 "else" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext);
-  return KEY_WORD_ELSE;
+  return ELSE;
 }
 
 "while" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext);
-  return KEY_WORD_WHILE;
+  return WHILE;
 }
 
 "for" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext);
-  return KEY_WORD_FOR;
+  return FOR;
 }
 
 "int" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext);
   return KEY_WORD_INT;
 }
 
 "float" {
-  yylval.str=strdup(yytext); 
+  yylval.str = strdup(yytext); 
   column_position = column_position + strlen(yytext);
   return KEY_WORD_FLOAT; 
 }
 
 "char" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
   return KEY_WORD_CHAR; 
 }
 
 "double" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
   return KEY_WORD_DOUBLE; 
 }
 
-"void" {
-  yylval.str=strdup(yytext);
+"const" {
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_VOID; 
+  return KEY_WORD_CONST; 
+}
+
+"void" {
+  yylval.str = strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return VOID; 
 }
 
 "return" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_RETURN; 
+  return RETURN; 
 }
 
 "&&" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_LOGICAL_AND; 
+  return LOGICAL_AND; 
+}
+
+"&" {
+  yylval.str = strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return AND; 
 }
 
 "||" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_LOGICAL_OR; 
+  return LOGICAL_OR; 
 }
 
 "!" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_LOGICAL_NOT; 
+  return LOGICAL_NOT; 
 }
 
 "=" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_EQUAL; 
+  return ASSIGN; 
 }
 
 "==" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_CEQ; 
+  return EQUAL; 
 }
 
 "!=" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_CNE; 
+  return NOT_EQUAL; 
 }
 
 "<" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_CLT; 
+  return LOWER; 
 }
 
 "<=" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_CLE; 
+  return LOWER_OR_EQUAL; 
 }
 
 ">" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_CGT; 
+  return GREATER; 
 }
 
 ">=" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_CGE; 
+  return GREATER_OR_EQUAL; 
 }
 
 "(" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_LPAREN; 
+  return LPAREN; 
 }
 
 ")" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_RPAREN; 
+  return RPAREN; 
 }
 
 "{" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_LBRACE; 
+  return LBRACE; 
 }
 
 "}" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_RBRACE; 
+  return RBRACE; 
 }
 
 "." {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_DOT; 
+  return DOT; 
 }
 
 "," {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_COMMA; 
+  return COMMA; 
 }
 
 ";" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_SEMICOLON; 
+  return SEMICOLON; 
 }
 
 "+" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_PLUS; 
+  return PLUS; 
 }
 
 "-" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_MINUS; 
+  return MINUS; 
 }
 
 "*" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_MUL; 
+  return MUL; 
 }
 
 "/" {
-  yylval.str=strdup(yytext);
+  yylval.str = strdup(yytext);
   column_position = column_position + strlen(yytext); 
-  return KEY_WORD_DIV; 
+  return DIV; 
 }
 
-\n                      { number_of_line++; }
-[ \t]
+"#include".* {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return INCLUDE_DIRECTIVE; 
+}
+
+"cv::Mat" {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return CV_MAT; 
+}
+
+"cv::"{IDENTIFIER} {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return CV_FUNCTION; 
+}
+
+"cv::Mat::"{IDENTIFIER} {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return CV_MAT_FUNCTION; 
+}
+
+\n { 
+  number_of_line++;
+  column_position = 1;
+}
+
+[ \t] {
+  column_position += 4;
+}
+
 \/\/[^\n]*
-\/\*[^*]*\*\/ 
-.                       { printf("Unknown token!\n"); yyterminate(); }
+\/\*[^*]*\*\/
+
+{IDENTIFIER} { 
+  yylval.str = strdup(yytext);
+  column_position = column_position + strlen(yytext); 
+  return IDENTIFIER; 
+}
+
+. {
+  column_position++;
+  fprintf(stderr, "Unknown token at line: %d, column: %d\n", number_of_line, column_position);
+  yyterminate(); 
+}
 
 %%
