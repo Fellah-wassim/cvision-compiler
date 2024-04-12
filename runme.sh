@@ -1,4 +1,8 @@
-bison -d -o bison_out/synt.tab.c synt.y
-flex -o flex_out/lex.yy.c lexer.l
-gcc -o out/cvision bison_out/synt.tab.c flex_out/lex.yy.c 
-./out/cvision < examples/ex.txt
+if [[ ! -d "out" ]]; then
+  mkdir -p out/flex out/bison
+fi
+
+bison -d -o out/bison/synt.tab.c src/parser/parser.y
+flex -o out/flex/lex.yy.c src/lexer/lexer.l
+gcc -o out/cvision out/bison/synt.tab.c out/flex/lex.yy.c 
+./out/cvision < tests/ex.cpp
