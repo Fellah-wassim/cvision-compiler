@@ -14,7 +14,7 @@
 	char* str;
 }
 
-%token <str>IDENTIFIER <str>INTEGER <str>KEY_WORD_CONST <str>CONSTANT_INTEGER <str>CONSTANT_FLOAT <str>CONSTANT_CHAR <float>DOUBLE <str>IF <str>ELSE <str>WHILE 
+%token <str>IDENTIFIER <str>KEY_WORD_CONST <str>INTEGER <str>FLOAT <str>CHAR <str>IF <str>ELSE <str>WHILE 
 %token <str>FOR <str>KEY_WORD_INT <str>KEY_WORD_FLOAT <str>KEY_WORD_CHAR <str>KEY_WORD_DOUBLE 
 %token <str>VOID <str>RETURN <str>LOGICAL_AND <str>AND <str>LOGICAL_OR 
 %token <str>LOGICAL_NOT <str>ASSIGN <str>EQUAL <str>NOT_EQUAL <str>LOWER 
@@ -63,30 +63,65 @@ statement_list: statement
 statement: declaration SEMICOLON
   | assignment SEMICOLON
   | CV_FUNCTION LPAREN parameter_list RPAREN SEMICOLON
+  | IF LPAREN condition_list RPAREN LBRACE statement_list RBRACE
+  | FOR LPAREN assignment SEMICOLON condition SEMICOLON assignment RPAREN LBRACE statement_list RBRACE
+
+condition_list: condition
+  | LPAREN condition_list RPAREN
+  | condition logical_operator condition_list
+  | LOGICAL_NOT condition
+  | LOGICAL_NOT condition logical_operator condition_list
+
+condition: item
+  | item comparision_operator item
+
+item: IDENTIFIER
+  | function_call
+  | constant
+  | predefined_function_call
+  | CV_MAT_FUNCTION
+
+comparision_operator: GREATER
+  | GREATER_OR_EQUAL
+  | LOWER
+  | LOWER_OR_EQUAL
+  | EQUAL
+  | NOT_EQUAL
+
+logical_operator: LOGICAL_AND
+  | LOGICAL_OR
 
 declaration: type IDENTIFIER
 
-assignment: declaration ASSIGN function_call
-  | declaration ASSIGN predefined_function_call
-  | IDENTIFIER ASSIGN CV_MAT_FUNCTION
-  | IDENTIFIER ASSIGN function_call
-  | IDENTIFIER ASSIGN predefined_function_call
+assignment: declaration ASSIGN item
+  | item ASSIGN item
+  | item math_operator math_operator
+  | math_operator math_operator item
+
+math_operator: PLUS 
+  | MINUS
+  | DIV
+  | MUL
 
 function_call: IDENTIFIER LPAREN parameter_list RPAREN
   | IDENTIFIER DOT function_call
+  | IDENTIFIER DOT IDENTIFIER
 
 predefined_function_call: CV_MAT_FUNCTION LPAREN parameter_list RPAREN
   | CV_FUNCTION LPAREN parameter_list RPAREN
 
-%%
+constant: CHAR
+  | FLOAT
+  | INTEGER
 
+%%
 
 void yyerror ()
 {
-  printf ("Syntax error in line %d column %d \n", number_of_lines, column_position);
-  exit(1);
+    printf ("Syntax error in line %d column %d \n", number_of_lines, column_position);
+    exit(1);
 }
 
 int main (int argc, char *argv[]){
-  yyparse();
+    yyparse();
 }
