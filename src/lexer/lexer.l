@@ -12,47 +12,33 @@
 
 NUMBER [0-9]
 IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*
-CONSTANT_INTEGER ({NUMBER}+|"\("[+-]{NUMBER}+"\)")
-CONSTANT_FLOAT ({NUMBER}+"."{NUMBER}+|\([+-]{NUMBER}+"."{NUMBER}+\))
-CONSTANT_CHAR (\'[^']*\')
+CHAR (\'[^']*\')
 STRING_LITERAL (\"[^\"]*\")
-DOUBLE {NUMBER}+\.{NUMBER}+
+FLOAT {NUMBER}+\.{NUMBER}+
 INTEGER {NUMBER}+
 
 %%
 
-{DOUBLE} {
+{FLOAT} {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng;  
-  return DOUBLE; 
+  return FLOAT; 
 }
 
 {INTEGER} {
-  yylval.str = strdup(yytext);
-  column_position = column_position + yyleng;  
-  return INTEGER;
-}
-
-{CONSTANT_INTEGER} {
   if(atoi(yytext) > -32768 && atoi(yytext) < 32768){
     yylval.str = strdup(yytext);
     column_position = column_position + yyleng;
-    return CONSTANT_INTEGER;
+    return INTEGER;
   }else{
     printf("Integer invalide line: %d, column: %d", number_of_lines, column_position);
   }
-} 
-
-{CONSTANT_FLOAT} {
-  yylval.str = strdup(yytext);
-  column_position = column_position + yyleng;
-  return CONSTANT_FLOAT;
 }
 
-{CONSTANT_CHAR} {
+{CHAR} {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng;
-  return CONSTANT_CHAR;
+  return CHAR;
 }
 
 {STRING_LITERAL} {
