@@ -19,7 +19,7 @@
 %token <str>VOID <str>RETURN <str>LOGICAL_AND <str>AND <str>LOGICAL_OR 
 %token <str>LOGICAL_NOT <str>ASSIGN <str>EQUAL <str>NOT_EQUAL <str>LOWER 
 %token <str>LOWER_OR_EQUAL <str>GREATER <str>GREATER_OR_EQUAL <str>LPAREN <str>RPAREN 
-%token <str>LBRACE <str>RBRACE <str>DOT <str>COMMA  
+%token <str>LBRACE <str>RBRACE <str>DOT <str>COMMA  <str>STD_CERR <str>STD_COUT <str>STD_ENDL <str>STD_CIN <str>STD_CLOG
 %token <str>SEMICOLON <str>PLUS <str>MINUS <str>MUL <str>DIV
 %token <str>INCLUDE_DIRECTIVE <str>STRING_LITERAL <str>CV_MAT <str>CV_FUNCTION <str>CV_MAT_FUNCTION
 
@@ -27,10 +27,13 @@
 
 %%
 
-program: INCLUDE_DIRECTIVE function_definition_list {
+program: include function_definition_list {
   printf("SYNTAX CORRECT \n");
   YYACCEPT;
 }
+
+include: INCLUDE_DIRECTIVE
+  | /*EMPTY*/
 
 function_definition_list: function_definition
   | function_definition function_definition_list
@@ -46,6 +49,7 @@ parameter: type IDENTIFIER
   | CV_FUNCTION
   | STRING_LITERAL
   | IDENTIFIER
+  | constant
   | /*EMPTY*/
 
 type: KEY_WORD_INT
@@ -65,6 +69,13 @@ statement: declaration SEMICOLON
   | CV_FUNCTION LPAREN parameter_list RPAREN SEMICOLON
   | IF LPAREN condition_list RPAREN LBRACE statement_list RBRACE
   | FOR LPAREN assignment SEMICOLON condition SEMICOLON assignment RPAREN LBRACE statement_list RBRACE
+  | std_out LOWER LOWER STRING_LITERAL LOWER LOWER STD_ENDL SEMICOLON
+  | RETURN condition SEMICOLON
+
+std_out: STD_CERR
+  | STD_COUT
+  | STD_CIN
+  | STD_CLOG
 
 condition_list: condition
   | LPAREN condition_list RPAREN
@@ -118,10 +129,10 @@ constant: CHAR
 
 void yyerror ()
 {
-    printf ("Syntax error in line %d column %d \n", number_of_lines, column_position);
-    exit(1);
+  printf ("Syntax error in line %d column %d \n", number_of_lines, column_position);
+  exit(1);
 }
 
 int main (int argc, char *argv[]){
-    yyparse();
+  yyparse();
 }
