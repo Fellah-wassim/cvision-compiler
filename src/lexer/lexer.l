@@ -269,6 +269,36 @@ INTEGER {NUMBER}+
   return CV_MAT_FUNCTION; 
 }
 
+"std::cout" {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return STD_COUT;   
+}
+
+"std::cerr" {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return STD_CERR;   
+}
+
+"std::endl" {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return STD_ENDL;   
+}
+
+"std::cin" {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return STD_CIN;   
+}
+
+"std::clog" {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return STD_CLOG;   
+}
+
 \n { 
   number_of_lines++;
   column_position = 0;
