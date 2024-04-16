@@ -7,10 +7,10 @@ cv::Mat generateNegativePositiveInvertedImage(const cv::Mat& inputImage) {
 
   // Iterate through each pixel of the input image
   for (int y = 0; y < inputImage.rows; ++y) {
-      for (int x = 0; x < inputImage.cols; ++x) {
-          // Invert the pixel value by subtracting it from the maximum value (255)
-          invertedImage.at<uchar>(y, x) = 255 - inputImage.at<uchar>(y, x);
-      }
+    for (int x = 0; x < inputImage.cols; ++x) {
+      // Invert the pixel value by subtracting it from the maximum value (255)
+      invertedImage.at<uchar>(y, x) = 255 - inputImage.at<uchar>(y, x);
+    }
   }
 
   return invertedImage;
@@ -20,8 +20,8 @@ int main() {
   // Load an example image (replace "input.jpg" with the path to your image)
   cv::Mat inputImage = cv::imread("input.jpg", cv::IMREAD_GRAYSCALE);
   if (inputImage.empty()) {
-      std::cerr << "Could not read the image file." << std::endl;
-      return 1;
+    std::cerr << "Could not read the image file."<< std::endl;
+    return 1;
   }
 
   // Generate a negative-positive inverted image

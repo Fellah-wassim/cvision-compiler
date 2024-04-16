@@ -1,4 +1,3 @@
-#include <opencv2/opencv.hpp>
 
 // Function to generate a negative-positive inverted image using OpenCV
 cv::Mat generateNegativePositiveInvertedImage(const cv::Mat& inputImage) {
@@ -44,6 +43,22 @@ cv::Mat generateNegativePositiveInvertedImage(const cv::Mat& inputImage) {
 
 }
 
-int main(){
+int main() {
+  // Load an example image (replace "input.jpg" with the path to your image)
+  cv::Mat inputImage = cv::imread("input.jpg", cv::IMREAD_GRAYSCALE);
+  if (inputImage.empty()) {
+      std::cerr << "Could not read the image file." << std::endl;
+      return 1;
+  }
+
+  // Generate a negative-positive inverted image
+  cv::Mat invertedImage = generateNegativePositiveInvertedImage(inputImage);
+
+  // Display the original and inverted images
+  cv::imshow("Original Image", inputImage);
   cv::imshow("Inverted Image", invertedImage);
+  cv::waitKey(0);
+  // invertedImage.at<uchar>(y, x)
+
+  return 0;
 }
