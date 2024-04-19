@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( Invert )
+find_package( OpenCV REQUIRED )
+add_executable( Invert Invert.cpp )
+target_link_libraries( Invert ${OpenCV_LIBS} )
