@@ -14,14 +14,17 @@
 	char* str;
 }
 
-%token <str>IDENTIFIER <str>KEY_WORD_CONST <str>INTEGER <str>FLOAT <str>CHAR <str>IF <str>ELSE <str>WHILE 
-%token <str>FOR <str>KEY_WORD_INT <str>KEY_WORD_FLOAT <str>KEY_WORD_CHAR <str>KEY_WORD_DOUBLE 
-%token <str>VOID <str>RETURN <str>LOGICAL_AND <str>AND <str>LOGICAL_OR 
-%token <str>LOGICAL_NOT <str>ASSIGN <str>EQUAL <str>NOT_EQUAL <str>LOWER 
-%token <str>LOWER_OR_EQUAL <str>GREATER <str>GREATER_OR_EQUAL <str>LPAREN <str>RPAREN 
-%token <str>LBRACE <str>RBRACE <str>DOT <str>COMMA  <str>STD_CERR <str>STD_COUT <str>STD_ENDL <str>STD_CIN <str>STD_CLOG
-%token <str>SEMICOLON <str>PLUS <str>MINUS <str>MUL <str>DIV
-%token <str>INCLUDE_DIRECTIVE <str>STRING_LITERAL <str>CV_MAT <str>CV_FUNCTION <str>CV_MAT_FUNCTION
+%token <str> IDENTIFIER INTEGER FLOAT CHAR VOID RETURN
+%token <str> FOR IF ELSE WHILE
+%token <str> LOGICAL_AND LOGICAL_NOT LOGICAL_OR AND
+%token <str> KEY_WORD_INT KEY_WORD_FLOAT KEY_WORD_CHAR KEY_WORD_DOUBLE KEY_WORD_CONST
+%token <str> ASSIGN EQUAL NOT_EQUAL LOWER LOWER_OR_EQUAL GREATER GREATER_OR_EQUAL
+%token <str> LPAREN RPAREN LBRACE RBRACE DOT COMMA SEMICOLON
+%token <str> PLUS MINUS MUL DIV
+%token <str> STD_CERR STD_COUT STD_ENDL STD_CIN STD_CLOG
+%token <str> INCLUDE_DIRECTIVE STRING_LITERAL
+%token <str> CV_MAT CV_FUNCTION CV_MAT_FUNCTION
+%token <str> UCHAR
 
 %start program
 
@@ -108,6 +111,7 @@ assignment: declaration ASSIGN item
   | item ASSIGN item
   | item math_operator math_operator
   | math_operator math_operator item
+  | special_function_call ASSIGN item math_operator special_function_call
 
 math_operator: PLUS 
   | MINUS
@@ -117,6 +121,8 @@ math_operator: PLUS
 function_call: IDENTIFIER LPAREN parameter_list RPAREN
   | IDENTIFIER DOT function_call
   | IDENTIFIER DOT IDENTIFIER
+
+special_function_call: IDENTIFIER DOT IDENTIFIER UCHAR LPAREN parameter_list RPAREN
 
 predefined_function_call: CV_MAT_FUNCTION LPAREN parameter_list RPAREN
   | CV_FUNCTION LPAREN parameter_list RPAREN
