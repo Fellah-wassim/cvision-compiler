@@ -299,6 +299,12 @@ INTEGER {NUMBER}+
   return STD_CLOG;   
 }
 
+"<uchar>" {
+  yylval.str = strdup(yytext);
+  column_position = column_position + yyleng; 
+  return UCHAR;   
+}
+
 \n { 
   number_of_lines++;
   column_position = 0;
