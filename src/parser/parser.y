@@ -138,7 +138,3 @@ void yyerror ()
   printf ("Syntax error in line %d column %d \n", number_of_lines, column_position);
   exit(1);
 }
-
-int main (int argc, char *argv[]){
-  yyparse();
-}
