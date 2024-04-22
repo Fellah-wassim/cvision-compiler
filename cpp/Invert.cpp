@@ -1,19 +1,19 @@
 #include <opencv2/opencv.hpp>
 
 // Function to generate a negative-positive inverted image using OpenCV
-cv::Mat generateNegativePositiveInvertedImage(const cv::Mat& inputImage) {
+cv::Mat generateNegativePositiveInvertedImage(const cv::Mat& inputImg) {
   // Create a new image with the same dimensions as the input image
-  cv::Mat invertedImage = cv::Mat::zeros(inputImage.size(), inputImage.type());
+  cv::Mat invertedImg = cv::Mat::zeros(inputImg.size(), inputImg.type());
 
   // Iterate through each pixel of the input image
-  for (int y = 0; y < inputImage.rows; ++y) {
-    for (int x = 0; x < inputImage.cols; ++x) {
+  for (int y = 0; y < inputImg.rows; ++y) {
+    for (int x = 0; x < inputImg.cols; ++x) {
       // Invert the pixel value by subtracting it from the maximum value (255)
-      invertedImage.at<uchar>(y, x) = 255 - inputImage.at<uchar>(y, x);
+      invertedImg.at<uchar>(y, x) = 255 - inputImg.at<uchar>(y, x);
     }
   }
 
-  return invertedImage;
+  return invertedImg;
 }
 
 int main() {
