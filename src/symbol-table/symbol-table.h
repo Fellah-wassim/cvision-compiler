@@ -84,3 +84,28 @@ bool symbol_table_insert(char *name, char *code, char *type, float value){
   }
 }
 
+bool symbol_table_insert_type(char *name, char *type) {
+  element *el = symbol_table_search(name);
+  if(el != NULL) {
+    strcpy(el->type, type);
+    return true;
+  }
+  return false;
+}
+
+bool symbol_table_insert_value(char *name, float value) {
+  element *el = symbol_table_search(name);
+  if(el != NULL) {
+    el->value = value;
+    return true;
+  }
+  return false;
+}
+
+bool isDoubleDeclared(char *name) {
+  element *el = symbol_table_search(name);
+  if(el != NULL) {
+    if(strcmp(el->type, "") == 0) return false;
+    return true;
+  }
+}
