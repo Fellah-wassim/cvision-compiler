@@ -24,6 +24,8 @@ int main() {
     return 1;
   }
 
+  int xg = 5;
+
   // Generate a negative-positive inverted image
   cv::Mat invertedImage = generateNegativePositiveInvertedImage(inputImage);
 
