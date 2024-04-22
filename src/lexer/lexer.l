@@ -5,7 +5,9 @@
   #include<stdlib.h>
   #include<string.h>
   #include "../bison/synt.tab.h"
-  #include "../../src/symbol-table/symbol-table.h"
+  int symbol_table_insert(char *name, char *code, char *type, float value);
+  int init_symbol_table();
+  void print_table();
   int number_of_lines = 1;
   int column_position = 1;
 %}
@@ -300,18 +302,14 @@ INTEGER {NUMBER}+
 "cv::"{IDENTIFIER} {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  char cvText[200];
-  snprintf(cvText, sizeof(cvText), "cv::%s", yytext);
-  symbol_table_insert(cvText, "Function" , "", 0);
+  symbol_table_insert(yytext, "Function" , "CVMAT", 0);
   return CV_FUNCTION; 
 }
 
 "cv::Mat::"{IDENTIFIER} {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  char cvMatText[200];
-  snprintf(cvMatText, sizeof(cvMatText), "cv::Mat::%s", yytext);
-  symbol_table_insert(cvMatText, "Method", "", 0);
+  symbol_table_insert(yytext, "Method", "CVMAT", 0);
   return CV_MAT_FUNCTION; 
 }
 
