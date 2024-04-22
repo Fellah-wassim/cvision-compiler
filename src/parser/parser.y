@@ -2,6 +2,9 @@
   #include <stdio.h>
   #include <stdlib.h>
   #include <string.h>
+  char stocked_type[20];
+  int error = 0;
+  #include "../../src/symbol-table/symbol-table.h"
   extern int number_of_lines, column_position;
   extern int yylex();
   void yyerror();
@@ -26,6 +29,8 @@
 %token <str> CV_MAT CV_FUNCTION CV_MAT_FUNCTION
 %token <str> UCHAR
 
+%type <str> declaration type item function_call constant predefined_function_call
+
 %start program
 
 %%
@@ -41,7 +46,7 @@ include: INCLUDE_DIRECTIVE
 function_definition_list: function_definition
   | function_definition function_definition_list
 
-function_definition: type IDENTIFIER LPAREN parameter_list RPAREN LBRACE statement_list RBRACE
+function_definition: declaration LPAREN parameter_list RPAREN LBRACE statement_list RBRACE
 
 parameter_list: parameter
   | parameter COMMA parameter_list
@@ -55,13 +60,27 @@ parameter: type IDENTIFIER
   | constant
   | /*EMPTY*/
 
-type: KEY_WORD_INT
-  | KEY_WORD_FLOAT
-  | KEY_WORD_CHAR
-  | KEY_WORD_DOUBLE
-  | KEY_WORD_CONST
-  | CV_MAT
-  | KEY_WORD_CONST CV_MAT AND
+type: KEY_WORD_INT {
+    strcpy(stocked_type,"INTEGER");
+  }
+  | KEY_WORD_FLOAT {
+    strcpy(stocked_type,"FLOAT");
+  }
+  | KEY_WORD_CHAR {
+    strcpy(stocked_type,"CHAR");
+  }
+  | KEY_WORD_DOUBLE {
+    strcpy(stocked_type,"DOUBLE");
+  }
+  | KEY_WORD_CONST {
+    strcpy(stocked_type,"CONST");
+  }
+  | CV_MAT  {
+    strcpy(stocked_type,"CVMAT");
+  }
+  | KEY_WORD_CONST CV_MAT AND {
+    strcpy(stocked_type,"CONST_CVMAT_&");
+  }
 
 
 statement_list: statement
@@ -89,7 +108,9 @@ condition_list: condition
 condition: item
   | item comparision_operator item
 
-item: IDENTIFIER
+item: IDENTIFIER {
+    $$ = $1;
+  }
   | function_call
   | constant
   | predefined_function_call
@@ -105,9 +126,29 @@ comparision_operator: GREATER
 logical_operator: LOGICAL_AND
   | LOGICAL_OR
 
-declaration: type IDENTIFIER
+declaration: type IDENTIFIER {
+  if(isDoubleDeclared($2)){
+    printf("Semantic error: double declaration of %s, in line %d \n", $2, number_of_lines);
+    error=1;
+    YYERROR;
+  }else{
+    symbol_table_insert_type($2, stocked_type);
+    $$ = $2;
+  }
+}
 
-assignment: declaration ASSIGN item
+assignment: declaration ASSIGN item {
+    element *declaration_identifier = symbol_table_search($1);
+    element *item = symbol_table_search($3);
+    if(declaration_identifier != NULL && item != NULL){
+      if(strcmp(declaration_identifier->type, item->type) != 0 ){
+        printf("Semantic error: incompatible types, in line %d \n", number_of_lines);
+        error=1;
+        YYERROR;
+      }
+      symbol_table_insert_value($1, item->value);
+    }
+  }
   | item ASSIGN item
   | item math_operator math_operator
   | math_operator math_operator item
@@ -118,18 +159,44 @@ math_operator: PLUS
   | DIV
   | MUL
 
-function_call: IDENTIFIER LPAREN parameter_list RPAREN
-  | IDENTIFIER DOT function_call
-  | IDENTIFIER DOT IDENTIFIER
+function_call: IDENTIFIER LPAREN parameter_list RPAREN {
+    char *str = (char*)malloc(strlen($1) + 3);
+    strcpy(str, $1);
+    strcat(str, "()");
+    $$ = str;
+  }
+  | IDENTIFIER DOT function_call {
+    char *str = (char*)malloc(strlen($1) + strlen($3) + 2);
+    strcpy(str, $1);
+    strcat(str, ".");
+    strcat(str, $3);
+    $$ = str;
+  }
+  | IDENTIFIER DOT IDENTIFIER {
+    char *str = (char*)malloc(strlen($1) + strlen($3) + 2);
+    strcpy(str, $1);
+    strcat(str, ".");
+    strcat(str, $3);
+    $$ = str;
+  }
 
 special_function_call: IDENTIFIER DOT IDENTIFIER UCHAR LPAREN parameter_list RPAREN
 
 predefined_function_call: CV_MAT_FUNCTION LPAREN parameter_list RPAREN
   | CV_FUNCTION LPAREN parameter_list RPAREN
 
-constant: CHAR
-  | FLOAT
-  | INTEGER
+constant: CHAR {
+    strcpy(stocked_type,"char");
+    $$ = $1;  
+  } 
+  | FLOAT {
+    strcpy(stocked_type,"float");
+    $$ = $1; 
+  }
+  | INTEGER {
+    strcpy(stocked_type,"float");
+    $$ = $1; 
+  }
 
 %%
 
