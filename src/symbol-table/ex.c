@@ -88,30 +88,3 @@ element *hash_table_delete(char *name){
   }
   return temp;
 }
-
-int main() {
-  init_hash_table();
-
-  element gg = {.name="gg", .code="gg", .type="gg", .value="gg"};
-  element hh = {.name="hh", .code="hh", .type="hh", .value="hh"};
-  element ll = {.name="ll", .code="ll", .type="ll", .value="ll"};
-  element ss = {.name="ss", .code="ss", .type="ss", .value="ss"};
-  element ggg = {.name="ggg", .code="ggg", .type="ggg", .value="ggg"};
-  element hhh = {.name="hhh", .code="hhh", .type="hhh", .value="hhh"};
-  element lll = {.name="lll", .code="lll", .type="lll", .value="lll"};
-  element sss = {.name="sss", .code="sss", .type="sss", .value="sss"};
-
-  hash_table_insert(&gg);
-  hash_table_insert(&hh);
-  hash_table_insert(&ll);
-  hash_table_insert(&ss);
-  hash_table_insert(&ggg);
-  hash_table_insert(&hhh);
-  hash_table_insert(&lll);
-  hash_table_insert(&sss);
-
-  print_table();
-
-
-  return 0;
-}
