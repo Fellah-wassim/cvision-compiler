@@ -53,7 +53,7 @@ void display_quad()
   int counter;
   for(counter=0; counter<Qc; counter++)
   {
-    printf("\n %d - ( %s  ,  %s  ,  %s  ,  %s )\n",counter, quadTable[counter].operation, quadTable[counter].operator1, quadTable[counter].operator2, quadTable[counter].stocker); 
+    printf("\n %d - ( %s  ,  %s  ,  %s  ,  %s )\n", counter, quadTable[counter].operation, quadTable[counter].operator1, quadTable[counter].operator2, quadTable[counter].stocker); 
     printf("\n--------------------------------------------------------\n");
   }
 }

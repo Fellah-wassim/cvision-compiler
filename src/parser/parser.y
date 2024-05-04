@@ -2,9 +2,12 @@
   #include <stdio.h>
   #include <stdlib.h>
   #include <string.h>
+  #include "../../src/symbol-table/symbol-table.h"
+  #include "../../src/quadruplet/quadruplet.h"
   char stocked_type[20];
   int error = 0;
-  #include "../../src/symbol-table/symbol-table.h"
+  char temp [20]; 
+	int tempCounter = 1;
   extern int number_of_lines, column_position;
   extern int yylex();
   void yyerror();
@@ -29,7 +32,8 @@
 %token <str> CV_MAT CV_FUNCTION CV_MAT_FUNCTION
 %token <str> UCHAR
 
-%type <str> declaration type item function_call constant predefined_function_call
+%type <str> declaration type item function_call constant predefined_function_call special_function_call
+%type <str> math_operator
 
 %start program
 
@@ -147,17 +151,43 @@ assignment: declaration ASSIGN item {
         YYERROR;
       }
       symbol_table_insert_value($1, item->value);
+      quad(":=", $3, "", $1);
     }
   }
-  | item ASSIGN item
+  | item ASSIGN item {
+    element *item1 = symbol_table_search($1);
+    element *item2 = symbol_table_search($3);
+    if(item1 != NULL && item2 != NULL){
+      if(strcmp(item1->type, item2->type) != 0 ){
+        printf("Semantic error: incompatible types, in line %d \n", number_of_lines);
+        error=1;
+        YYERROR;
+      }
+      symbol_table_insert_value($1, item2->value);
+      quad(":=", $3, "", $1);
+    }
+  }
   | item math_operator math_operator
   | math_operator math_operator item
-  | special_function_call ASSIGN item math_operator special_function_call
+  | special_function_call ASSIGN item math_operator special_function_call {
+    sprintf(temp,"temp%d",tempCounter);
+		tempCounter++;
+    quad($4, $3, $5, temp);
+    quad(":=", temp, "", $1);
+  }
 
-math_operator: PLUS 
-  | MINUS
-  | DIV
-  | MUL
+math_operator: PLUS {
+    $$ = $1;
+  }
+  | MINUS {
+    $$ = $1;
+  }
+  | DIV {
+    $$ = $1;
+  }
+  | MUL {
+    $$ = $1;
+  }
 
 function_call: IDENTIFIER LPAREN parameter_list RPAREN {
     char *str = (char*)malloc(strlen($1) + 3);
@@ -180,8 +210,22 @@ function_call: IDENTIFIER LPAREN parameter_list RPAREN {
     $$ = str;
   }
 
-special_function_call: IDENTIFIER DOT IDENTIFIER UCHAR LPAREN parameter_list RPAREN
-
+special_function_call: IDENTIFIER DOT IDENTIFIER UCHAR LPAREN parameter_list RPAREN {
+  size_t len = strlen($1) + strlen($2) + strlen($3) + strlen($4) + strlen($5) + strlen($7) + 8;
+  char *rule = malloc(len + 1);
+  if (rule != NULL) {
+    strcpy(rule, $1);
+    strcat(rule, $2);
+    strcat(rule, $3);
+    strcat(rule, $4);
+    strcat(rule, $5);
+    strcat(rule, $7);
+    $$ = rule;
+  } else {
+    fprintf(stderr, "Memory allocation failed.\n");
+    $$ = NULL;
+  }
+}
 predefined_function_call: CV_MAT_FUNCTION LPAREN parameter_list RPAREN
   | CV_FUNCTION LPAREN parameter_list RPAREN
 
