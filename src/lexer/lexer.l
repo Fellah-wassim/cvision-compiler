@@ -8,6 +8,7 @@
   int symbol_table_insert(char *name, char *code, char *type, float value);
   int init_symbol_table();
   void print_table();
+  void display_quad();
   int number_of_lines = 1;
   int column_position = 1;
 %}
@@ -386,4 +387,5 @@ int main() {
   init_symbol_table();
   yyparse();
   print_table();
+  display_quad();
 }
