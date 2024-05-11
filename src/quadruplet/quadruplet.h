@@ -5,7 +5,6 @@
 #define MAX_QUADRUPLETS 100
 int Qc = 0;
 
-//struct of the quad
 typedef struct
 {
   char operation[20]; 
@@ -16,7 +15,6 @@ typedef struct
 
 quadType quadTable[MAX_QUADRUPLETS];
 
-//function to insert quad
 void quad(char operation[], char operator1[], char operator2[], char stocker[])
 {
 	strcpy(quadTable[Qc].operation, operation);
@@ -26,7 +24,6 @@ void quad(char operation[], char operator1[], char operator2[], char stocker[])
   Qc++;
 }
 
-//function update the quad value
 void quad_updated(int numberQuad, int colone, char value [])
 {
   switch (colone)
@@ -46,7 +43,6 @@ void quad_updated(int numberQuad, int colone, char value [])
   }
 }
 
-//function to display quad table
 void display_quad()
 {
   printf("\n******************************* Quadruplets *******************************\n");
