@@ -33,7 +33,7 @@
 %token <str> UCHAR
 
 %type <str> declaration type item function_call constant predefined_function_call special_function_call
-%type <str> math_operator
+%type <str> math_operator comparision_operator
 
 %start program
 
@@ -86,7 +86,6 @@ type: KEY_WORD_INT {
     strcpy(stocked_type,"CONST_CVMAT_&");
   }
 
-
 statement_list: statement
   | statement statement_list
 
@@ -110,7 +109,11 @@ condition_list: condition
   | LOGICAL_NOT condition logical_operator condition_list
 
 condition: item
-  | item comparision_operator item
+  | item comparision_operator item  {
+    char temp[10];
+    sprintf(temp, "t%d", tempCounter++);
+    quad($2, $1, $3, temp);
+  }
 
 item: IDENTIFIER {
     $$ = $1;
@@ -120,12 +123,24 @@ item: IDENTIFIER {
   | predefined_function_call
   | CV_MAT_FUNCTION
 
-comparision_operator: GREATER
-  | GREATER_OR_EQUAL
-  | LOWER
-  | LOWER_OR_EQUAL
-  | EQUAL
-  | NOT_EQUAL
+comparision_operator: GREATER { 
+    $$ = ">"; 
+  }
+  | GREATER_OR_EQUAL { 
+    $$ = ">=";
+  }
+  | LOWER { 
+    $$ = "<"; 
+  }
+  | LOWER_OR_EQUAL { 
+    $$ = "<="; 
+  }
+  | EQUAL { 
+    $$ = "=="; 
+  }
+  | NOT_EQUAL {
+    $$ = "!="; 
+  }
 
 logical_operator: LOGICAL_AND
   | LOGICAL_OR
@@ -167,8 +182,20 @@ assignment: declaration ASSIGN item {
       quad(":=", $3, "", $1);
     }
   }
-  | item math_operator math_operator
-  | math_operator math_operator item
+  | item math_operator math_operator {
+    if(strcmp($2, $3)==0){
+      char temp[10];
+      sprintf(temp, "t%d", tempCounter++);
+      quad($2, $1, "1", temp);
+    }
+  }
+  | math_operator math_operator item {
+    if(strcmp($1, $2)==0){
+      char temp[10];
+      sprintf(temp, "t%d", tempCounter++);
+      quad($1, $3, "1", temp);
+    }
+  }
   | special_function_call ASSIGN item math_operator special_function_call {
     sprintf(temp,"temp%d",tempCounter);
 		tempCounter++;
