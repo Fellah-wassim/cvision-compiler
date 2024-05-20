@@ -7,10 +7,10 @@ int Qc = 0;
 
 typedef struct
 {
-  char operation[20]; 
-  char operator1[20];   
-  char operator2[20];   
-  char stocker[20];  
+  char operation[25]; 
+  char operator1[25];   
+  char operator2[25];   
+  char stocker[25];  
 } quadType; 
 
 quadType quadTable[MAX_QUADRUPLETS];

@@ -26,7 +26,7 @@ INTEGER {NUMBER}+
 {FLOAT} {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng;  
-  symbol_table_insert(yytext, "Constant", "FLOAT", atof(yytext));
+  symbol_table_insert(yytext, "CONSTANT", "FLOAT", atof(yytext));
   return FLOAT; 
 }
 
@@ -34,7 +34,7 @@ INTEGER {NUMBER}+
   if(atoi(yytext) > -32768 && atoi(yytext) < 32768){
     yylval.str = strdup(yytext);
     column_position = column_position + yyleng;
-    symbol_table_insert(yytext, "cONSTANT", "INTEGER", atoi(yytext));
+    symbol_table_insert(yytext, "CONSTANT", "INTEGER", atoi(yytext));
     return INTEGER;
   }else{
     printf("Integer invalid at line: %d, column: %d\n", number_of_lines, column_position);
@@ -58,231 +58,231 @@ INTEGER {NUMBER}+
 "if" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng;
-  symbol_table_insert(yytext, "IF", "Keyword", 0);
+  symbol_table_insert(yytext, "IF", "KEYWORD", 0);
   return IF;
 }
 
 "else" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng;
-  symbol_table_insert(yytext, "ELSE", "Keyword", 0);
+  symbol_table_insert(yytext, "ELSE", "KEYWORD", 0);
   return ELSE;
 }
 
 "while" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng;
-  symbol_table_insert(yytext, "WHILE", "Keyword", 0);
+  symbol_table_insert(yytext, "WHILE", "KEYWORD", 0);
   return WHILE;
 }
 
 "for" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng;
-  symbol_table_insert(yytext, "FOR", "Keyword", 0);
+  symbol_table_insert(yytext, "FOR", "KEYWORD", 0);
   return FOR;
 }
 
 "int" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng;
-  symbol_table_insert(yytext, "Keyword", "", 0);
+  symbol_table_insert(yytext, "KEYWORD", "", 0);
   return KEY_WORD_INT;
 }
 
 "float" {
   yylval.str = strdup(yytext); 
   column_position = column_position + yyleng;
-  symbol_table_insert(yytext, "Keyword", "", 0);
+  symbol_table_insert(yytext, "KEYWORD", "", 0);
   return KEY_WORD_FLOAT; 
 }
 
 "char" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Keyword", "", 0);
+  symbol_table_insert(yytext, "KEYWORD", "", 0);
   return KEY_WORD_CHAR; 
 }
 
 "double" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Keyword", "", 0);
+  symbol_table_insert(yytext, "KEYWORD", "", 0);
   return KEY_WORD_DOUBLE; 
 }
 
 "const" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Keyword", "", 0);
+  symbol_table_insert(yytext, "KEYWORD", "", 0);
   return KEY_WORD_CONST; 
 }
 
 "void" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Keyword", "", 0);
+  symbol_table_insert(yytext, "KEYWORD", "", 0);
   return VOID; 
 }
 
 "return" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Keyword", "", 0);
+  symbol_table_insert(yytext, "KEYWORD", "", 0);
   return RETURN; 
 }
 
 "&&" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return LOGICAL_AND; 
 }
 
 "&" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return AND; 
 }
 
 "||" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return LOGICAL_OR; 
 }
 
 "!" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return LOGICAL_NOT; 
 }
 
 "=" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return ASSIGN; 
 }
 
 "==" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return EQUAL; 
 }
 
 "!=" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return NOT_EQUAL; 
 }
 
 "<" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return LOWER; 
 }
 
 "<=" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return LOWER_OR_EQUAL; 
 }
 
 ">" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return GREATER; 
 }
 
 ">=" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return GREATER_OR_EQUAL; 
 }
 
 "(" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Separator", "", 0);
+  symbol_table_insert(yytext, "SEPARATOR", "", 0);
   return LPAREN; 
 }
 
 ")" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Separator", "", 0);
+  symbol_table_insert(yytext, "SEPARATOR", "", 0);
   return RPAREN; 
 }
 
 "{" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Separator", "", 0);
+  symbol_table_insert(yytext, "SEPARATOR", "", 0);
   return LBRACE; 
 }
 
 "}" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Separator", "", 0);
+  symbol_table_insert(yytext, "SEPARATOR", "", 0);
   return RBRACE; 
 }
 
 "." {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Separator", "", 0);
+  symbol_table_insert(yytext, "SEPARATOR", "", 0);
   return DOT; 
 }
 
 "," {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Separator", "", 0);
+  symbol_table_insert(yytext, "SEPARATOR", "", 0);
   return COMMA; 
 }
 
 ";" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Separator", "", 0);
+  symbol_table_insert(yytext, "SEPARATOR", "", 0);
   return SEMICOLON; 
 }
 
 "+" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return PLUS; 
 }
 
 "-" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return MINUS; 
 }
 
 "*" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return MUL; 
 }
 
 "/" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Operator", "", 0);
+  symbol_table_insert(yytext, "OPERATOR", "", 0);
   return DIV; 
 }
 
@@ -296,63 +296,63 @@ INTEGER {NUMBER}+
 "cv::Mat" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Class", "", 0);
+  symbol_table_insert(yytext, "CLASS", "", 0);
   return CV_MAT; 
 }
 
 "cv::"{IDENTIFIER} {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Function" , "CVMAT", 0);
+  symbol_table_insert(yytext, "FUNCTION" , "CVMAT", 0);
   return CV_FUNCTION; 
 }
 
 "cv::Mat::"{IDENTIFIER} {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Method", "CVMAT", 0);
+  symbol_table_insert(yytext, "METHOD", "CVMAT", 0);
   return CV_MAT_FUNCTION; 
 }
 
 "std::cout" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Object", "", 0);
+  symbol_table_insert(yytext, "OBJECT", "", 0);
   return STD_COUT;   
 }
 
 "std::cerr" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Object", "", 0);
+  symbol_table_insert(yytext, "OBJECT", "", 0);
   return STD_CERR;   
 }
 
 "std::endl" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Object", "", 0);
+  symbol_table_insert(yytext, "OBJECT", "", 0);
   return STD_ENDL;   
 }
 
 "std::cin" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Object", "", 0);
+  symbol_table_insert(yytext, "OBJECT", "", 0);
   return STD_CIN;   
 }
 
 "std::clog" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Object", "", 0);
+  symbol_table_insert(yytext, "OBJECT", "", 0);
   return STD_CLOG;   
 }
 
 "<uchar>" {
   yylval.str = strdup(yytext);
   column_position = column_position + yyleng; 
-  symbol_table_insert(yytext, "Type", "", 0);
+  symbol_table_insert(yytext, "TYPE", "", 0);
   return UCHAR;   
 }
 
