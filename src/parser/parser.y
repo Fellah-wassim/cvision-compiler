@@ -8,6 +8,7 @@
   int error = 0;
   char temp [20]; 
 	int tempCounter = 1;
+  int condCounter = 1;
   extern int number_of_lines, column_position;
   extern int yylex();
   void yyerror();
@@ -32,7 +33,7 @@
 %token <str> CV_MAT CV_FUNCTION CV_MAT_FUNCTION
 %token <str> UCHAR
 
-%type <str> declaration type item function_call constant predefined_function_call special_function_call
+%type <str> declaration type item function_call constant predefined_function_call special_function_call condition
 %type <str> math_operator comparision_operator
 
 %start program
@@ -95,7 +96,11 @@ statement: declaration SEMICOLON
   | IF LPAREN condition_list RPAREN LBRACE statement_list RBRACE
   | FOR LPAREN assignment SEMICOLON condition SEMICOLON assignment RPAREN LBRACE statement_list RBRACE
   | std_out LOWER LOWER STRING_LITERAL LOWER LOWER STD_ENDL SEMICOLON
-  | RETURN condition SEMICOLON
+  | RETURN condition SEMICOLON  {
+    char temp[25];
+    sprintf(temp, "end [return %s]", $2);
+    quad("BR", temp, "", "");
+  }
 
 std_out: STD_CERR
   | STD_COUT
@@ -108,20 +113,54 @@ condition_list: condition
   | LOGICAL_NOT condition
   | LOGICAL_NOT condition logical_operator condition_list
 
-condition: item
+condition: item {
+    $$ = $1;
+  }
   | item comparision_operator item  {
     char temp[10];
     sprintf(temp, "t%d", tempCounter++);
     quad($2, $1, $3, temp);
+    if(strcmp($2, "<")==0){
+      char etiq[20];
+      sprintf(etiq, "false_condition%d", condCounter++);
+      quad("-", $1, $3, "");
+      quad("BGE",etiq,"","");
+    }
+    if(strcmp($2, "<=")==0){
+      char etiq[20];
+      sprintf(etiq, "false_condition%d", condCounter++);
+      quad("-", $1, $3, "");
+      quad("BG", etiq, "", "");
+    }
+    if(strcmp($2, ">")==0){
+      char etiq[20];
+      sprintf(etiq, "false_condition%d", condCounter++);
+      quad("-", $1, $3, "");
+      quad("BLE", etiq, "", "");
+    }
+    if(strcmp($2, ">=")==0){
+      char etiq[20];
+      sprintf(etiq, "false_condition%d", condCounter++);
+      quad("-", $1, $3, "");
+      quad("BL", etiq, "", "");
+    }
   }
 
 item: IDENTIFIER {
     $$ = $1;
   }
-  | function_call
-  | constant
-  | predefined_function_call
-  | CV_MAT_FUNCTION
+  | function_call{
+    $$ = $1;
+  }
+  | constant {
+    $$ = $1;
+  }
+  | predefined_function_call {
+    $$ = $1;
+  }
+  | CV_MAT_FUNCTION {
+    $$ = $1;
+  }
 
 comparision_operator: GREATER { 
     $$ = ">"; 
