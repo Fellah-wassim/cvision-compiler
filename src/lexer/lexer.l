@@ -5,10 +5,16 @@
   #include<stdlib.h>
   #include<string.h>
   #include "../bison/synt.tab.h"
+  #include "../../src/data-structure/stack/stack.h"
+  Stack *returns_stack;
+  Stack *create_stack();
   int symbol_table_insert(char *name, char *code, char *type, float value);
   int init_symbol_table();
   void print_table();
   void display_quad();
+  void save_quad_to_file(const char* filename);
+  void generate_code();
+  void optimize_quad();
   int number_of_lines = 1;
   int column_position = 1;
 %}
@@ -384,8 +390,37 @@ INTEGER {NUMBER}+
 %%
 
 int main() {
+  returns_stack = create_stack();
   init_symbol_table();
   yyparse();
+  printf("\n\n\n");
+  printf("\n\n--------------------------------------------------------\n\n");
+  printf("                    1-Symbole Table\n\n");
+  printf("--------------------------------------------------------\n");
   print_table();
+  printf("\n\n\n");
+  printf("\n\n--------------------------------------------------------\n\n");
+  printf("                    2-Quadruplets\n\n");
+  printf("--------------------------------------------------------\n");
   display_quad();
+  save_quad_to_file("out/quadruplets/Quadruplets.txt");
+  printf("\n\n\n");
+  printf("\n\n--------------------------------------------------------\n\n");
+  printf("                    3-Generated Code\n\n");
+  printf("--------------------------------------------------------\n");
+  generate_code();
+  optimize_quad();
+  printf("\n\n\n");
+  printf("\n\n--------------------------------------------------------\n\n");
+  printf("               4-Quadruplets after Optimization\n\n");
+  printf("--------------------------------------------------------\n");
+  display_quad();
+  save_quad_to_file("out/quadruplets/Quadruplets Optimized.txt");
+  printf("\n\n\n");
+  printf("\n\n--------------------------------------------------------\n\n");
+  printf("            5-Generated Code after Optimization\n\n");
+  printf("--------------------------------------------------------\n");
+  generate_code();
+  printf("\n\n\n");
+
 }
