@@ -4,9 +4,20 @@
   #include <string.h>
   #include "../../src/symbol-table/symbol-table.h"
   #include "../../src/quadruplet/quadruplet.h"
+  typedef struct Stack
+  {
+    int *items;
+    int top;
+  } Stack;
+  int is_empty(Stack *stack);
+  int pop(Stack *stack);
+  void push(Stack *stack, int item);
+  extern Stack *returns_stack;
   char stocked_type[20];
+  extern int Qc;
+  int qc_saver, end_saver;
   int error = 0;
-  char temp [20]; 
+  char temp [25]; 
 	int tempCounter = 1;
   int condCounter = 1;
   extern int number_of_lines, column_position;
@@ -42,6 +53,11 @@
 
 program: include function_definition_list {
   printf("SYNTAX CORRECT \n");
+  while(!is_empty(returns_stack)){
+    int saved = pop(returns_stack);
+    sprintf(temp, "%d", Qc);
+    quad_updated(saved, 2, temp);
+  }
   YYACCEPT;
 }
 
@@ -87,7 +103,10 @@ type: KEY_WORD_INT {
     strcpy(stocked_type,"CONST_CVMAT_&");
   }
 
-statement_list: statement
+statement_list: statement {
+    sprintf(temp, "%d", Qc);
+    quad_updated(qc_saver, 2, temp);
+  }
   | statement statement_list
 
 statement: declaration SEMICOLON
@@ -97,9 +116,11 @@ statement: declaration SEMICOLON
   | FOR LPAREN assignment SEMICOLON condition SEMICOLON assignment RPAREN LBRACE statement_list RBRACE
   | std_out LOWER LOWER STRING_LITERAL LOWER LOWER STD_ENDL SEMICOLON
   | RETURN condition SEMICOLON  {
-    char temp[25];
-    sprintf(temp, "end [return %s]", $2);
-    quad("BR", temp, "", "");
+    char exp[25];
+    push(returns_stack, Qc);
+    sprintf(temp, "t%d", tempCounter++);
+    sprintf(exp, "'return %s'", $2);
+    quad("BR", "", exp, temp);
   }
 
 std_out: STD_CERR
@@ -114,35 +135,28 @@ condition_list: condition
   | LOGICAL_NOT condition logical_operator condition_list
 
 condition: item {
+    qc_saver = Qc;
+    sprintf(temp, "t%d", tempCounter++);
+    quad("BZ"," ", $1, temp);
     $$ = $1;
   }
   | item comparision_operator item  {
-    char temp[10];
     sprintf(temp, "t%d", tempCounter++);
-    quad($2, $1, $3, temp);
+    char exp[20];
+    quad("-", $1, $3, "");
+    sprintf(exp, "'%s %s %s'", $1, $2, $3);
+    qc_saver = Qc;
     if(strcmp($2, "<")==0){
-      char etiq[20];
-      sprintf(etiq, "false_condition%d", condCounter++);
-      quad("-", $1, $3, "");
-      quad("BGE",etiq,"","");
+      quad("BGE", " ", exp, temp);
     }
     if(strcmp($2, "<=")==0){
-      char etiq[20];
-      sprintf(etiq, "false_condition%d", condCounter++);
-      quad("-", $1, $3, "");
-      quad("BG", etiq, "", "");
+      quad("BG", " ", exp, temp);
     }
     if(strcmp($2, ">")==0){
-      char etiq[20];
-      sprintf(etiq, "false_condition%d", condCounter++);
-      quad("-", $1, $3, "");
-      quad("BLE", etiq, "", "");
+      quad("BLE", " ", exp, temp);
     }
     if(strcmp($2, ">=")==0){
-      char etiq[20];
-      sprintf(etiq, "false_condition%d", condCounter++);
-      quad("-", $1, $3, "");
-      quad("BL", etiq, "", "");
+      quad("BL", " ", exp, temp);
     }
   }
 
@@ -223,14 +237,12 @@ assignment: declaration ASSIGN item {
   }
   | item math_operator math_operator {
     if(strcmp($2, $3)==0){
-      char temp[10];
       sprintf(temp, "t%d", tempCounter++);
       quad($2, $1, "1", temp);
     }
   }
   | math_operator math_operator item {
     if(strcmp($1, $2)==0){
-      char temp[10];
       sprintf(temp, "t%d", tempCounter++);
       quad($1, $3, "1", temp);
     }
